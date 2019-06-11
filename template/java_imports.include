@@ -1,0 +1,22 @@
+import java.util.*;
+
+import javacommon.base.*;
+import javacommon.util.*;
+
+import cn.org.rapid_framework.util.*;
+import cn.org.rapid_framework.web.util.*;
+import cn.org.rapid_framework.page.*;
+import cn.org.rapid_framework.page.impl.*;
+
+import ${basepackage}.model.*;
+import ${basepackage}.dao.*;
+import ${basepackage}.service.*;
+import ${basepackage}.vo.query.*;
+
+/**
+ * <p>Description: [描述该类概要功能介绍]</p>
+ * Created on 2016年4月26日
+ * @author  李冠霖
+ * @version 1.0 
+ * Copyright (c) 2016 北京柯莱特科技有限公司 交付部
+ */

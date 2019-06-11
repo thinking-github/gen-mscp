@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<#assign className = table.className>
+<#assign classNameLower = className?uncap_first>
+<#assign tableName = table.sqlName>
+<#assign tableNameLower = tableName?lower_case>
+<#assign pkColumn = table.pkColumn>
+<#assign prefix_key = '#'>
+
+<mapper namespace="${basepackage}.${module}.dao.${className}DAO">
+
+	<!-- =========================================================== -->
+	<!-- 定义resultMap -->
+	<!-- =========================================================== -->
+	<resultMap id="${classNameLower}Map" type="${classNameLower}">
+		<#list table.columns as column>
+		<#if column.pk>
+		<id column="${column}" property="${column.columnNameLower}" jdbcType="${column.jdbcType}"/> 
+		<#else>
+		<result column="${column}" property="${column.columnNameLower}"  jdbcType="${column.jdbcType}"/>
+		</#if>
+		</#list>
+	</resultMap>
+	
+   <sql id="tableName">${tableName}</sql>
+   
+	<!-- =========================================================== -->
+	<!-- 一些公共变量设置 -->
+	<!-- =========================================================== -->
+	<!-- mysql 分页 -->
+	<sql id="pagination_tail">
+		limit ${prefix_key}{page.pageOffset} ,
+		${prefix_key}{page.rows}
+	</sql>
+	<!-- mysql 查询总数 -->
+	<sql id="count_Tail">
+		select count(1) from
+	</sql>
+
+	<sql id="selectAllColumns">
+		<![CDATA[
+		select
+		<#list table.columns as column>
+ 			<#if column_index != 0>,</#if>${column}
+		</#list>
+		FROM 
+		${tableName} ${tableNameLower}_
+		]]>
+	</sql>
+
+	<sql id="where_fragement">
+		where 1=1
+		<if test="entity != null">
+			<#list table.columns as column>
+			<#if column.javaType == "java.lang.String" || column.javaType == "String"> 
+			<if test="entity.${column.columnNameLower} != null  and entity.${column.columnNameLower} !=''">
+			 <#else>
+   		     <if test="entity.${column.columnNameLower} != null ">
+   		     </#if>
+				<![CDATA[ and ${tableNameLower}_.${column}  = ${prefix_key}{entity.${column.columnNameLower}} ]]>
+			</if>
+			</#list>
+		</if>
+	</sql>
+
+	<!-- =========================================================== -->
+	<!-- Dao方法中的基本增删改查方法 -->
+	<!-- =========================================================== -->
+	<!-- 插入记录 -->
+	<!-- 插入记录 -->
+	<insert id="add" parameterType="${classNameLower}" useGeneratedKeys="true" keyProperty="${pkColumn.columnNameFirstLower}">
+		<![CDATA[
+		insert into ${tableName} (
+		    <#list table.columns as column>
+		    	 <#if column_index != 0>,</#if>${column}
+			</#list>
+		   )values(
+		    <#list table.columns as column>
+		    	<#if column_index != 0>,</#if>${prefix_key}{${column.columnNameLower}}
+			</#list>
+		   )
+	    ]]>
+	</insert>
+
+	<!-- 根据id查询 -->
+	<select id="queryById" resultMap="${classNameLower}Map" parameterType="Object">
+		<include refid="selectAllColumns" />
+		<![CDATA[
+		where ${tableNameLower}_.id = ${prefix_key}{id}
+		]]>
+	</select>
+
+	<!-- 根据id，修改记录 -->
+	<update id="update" parameterType="${classNameLower}">
+		update ${tableName} set
+   		<#list table.columns as column>
+   			<#if column.javaType == "java.lang.String" || column.javaType == "String"> 
+   		     <if test="${column.columnNameLower} != null and ${column.columnNameLower} != '' ">
+   		    <#else>
+   		     <if test="${column.columnNameLower} != null ">
+   		     </#if>
+   			<#if column_index != 0>,</#if>${column} = ${prefix_key}{${column.columnNameLower}}
+   			</if>
+		</#list>
+		 where id = ${prefix_key}{id}
+	</update>
+
+	<!-- 删除记录 -->
+	<delete id="delete" parameterType="Object">
+		<![CDATA[
+		delete from ${tableName} where id = ${prefix_key}{id}
+		]]>
+	</delete>
+
+	<!-- 查询总数 -->
+	<select id="queryCount" resultType="long">
+		<include refid="count_Tail" />
+		${tableNameLower} ${tableNameLower}_
+		<include refid="where_fragement" />
+	</select>
+
+	<!-- 分页查询 -->
+	<!-- 分页查询 -->
+	<select id="queryList" resultMap="${classNameLower}Map">
+		<include refid="selectAllColumns" />
+		<include refid="where_fragement" />
+		<if test="page!=null">
+			<include refid="pagination_tail" />
+		</if>
+	</select>
+</mapper>
