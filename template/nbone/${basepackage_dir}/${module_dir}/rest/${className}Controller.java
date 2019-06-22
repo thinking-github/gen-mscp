@@ -129,7 +129,7 @@ public class ${className}Controller {
      * @param ${classNameLower}
      * @return
      */
-    @RequestMapping(value = "${classNameLower}" ,method = RequestMethod.GET)
+    @RequestMapping(value = "${classNameLower}" ,method = {RequestMethod.GET,RequestMethod.POST})
     public ApiResponse getList(${className} ${classNameLower}){
     		logger.debug("input parameters：[{}]",JSONObject.toJSONString(${classNameLower}));
     		 List<${className}>  ${classNameLower}s = null;
@@ -150,7 +150,7 @@ public class ${className}Controller {
      * @param ${classNameLower}
      * @return
      */
-    @RequestMapping(value = "${classNameLower}" ,params ="pageNow",method = RequestMethod.GET)
+    @RequestMapping(value = "${classNameLower}" ,params ="pageNow",method = {RequestMethod.GET,RequestMethod.POST})
     public ApiResponse getPage(${className} ${classNameLower},@RequestParam("pageNow") Integer pageNow, @RequestParam("pageSize")Integer pageSize){
     		logger.debug("input parameters：[{}]",JSONObject.toJSONString(${classNameLower}));
     		DataGrid<${className}>  ${classNameLower}s = null;
