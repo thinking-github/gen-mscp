@@ -12,11 +12,15 @@ public class GeneratorMain {
 	 */
 	public static void main(String[] args) throws Exception {
 		GeneratorFacade g = new GeneratorFacade();
-//		g.printAllTableNames();				//打印数据库中的表名称
-		g.deleteOutRootDir(); //删除生成器的输出目录
-//    	g.generateByTable("user","template");//通过数据库表生成文件,template为模板的根目录
-    	
-		g.generateByAllTable("template");	//自动搜索数据库中的所有表并生成文件,template为模板的根目录
+		//打印数据库中的表名称
+//		g.printAllTableNames();
+		//删除生成器的输出目录
+		g.deleteOutRootDir();
+		//通过数据库表生成文件,template为模板的根目录
+    	g.generateByTable("area_info","template");
+
+		//自动搜索数据库中的所有表并生成文件,template为模板的根目录
+//		g.generateByAllTable("template");
 //		g.generateByClass(Blog.class,"template_clazz");
 //		g.deleteByTable("table_name", "template"); //删除生成的文件
 		//打开文件夹
